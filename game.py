@@ -3,7 +3,7 @@ import pygame
 
 from scene import Scene
 
-from gameobjects.testobj import TestObj
+from gameobjects import Planet, Projectile, City
 
 
 def start():
@@ -22,7 +22,10 @@ def setup(screen):
 
     # Add game objects to the scene
     # TODO: Add game objects here
-    scene.add(TestObj((0., 0.)))
+    scene.add(Planet((0., 0.)))
+    scene.add(Projectile((50., 0.)))
+    scene.add(City((1.5, -2.9), color=(0, 0, 255), rotation=.5))
+
 
     return scene
 
