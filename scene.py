@@ -1,12 +1,25 @@
 
 from pygame import draw
+from numpy import array, ndarray
 
 
 class Scene:
     def __init__(self, screen):
         self.screen = screen
-        self.camera = Camera(0, 0, screen.get_width(), screen.get_height())
         self.game_objects = []
+
+        self.unit_ratio = 100
+
+        screen_width = screen.get_width()
+        screen_height = screen.get_height()
+        if screen_width >= screen_height:
+            self.screen_ratio = screen_height
+            self.screen_offset = (screen_width - screen_height) // 2
+            self.camera = Camera((0., 0.), (screen_width / screen_height) * self.unit_ratio, self.unit_ratio)
+        else:
+            self.screen_ratio = screen_width
+            self.screen_offset = (screen_height - screen_width) // 2
+            self.camera = Camera((0., 0.), self.unit_ratio, (screen_height / screen_width) * self.unit_ratio)
 
     def add(self, game_object): self.game_objects.append(game_object)
 
@@ -25,9 +38,12 @@ class Scene:
     def __render(self, obj):
         # Calculate vertex offsets from camera
         screen_pos = []
-        for x, y in obj.get_vertices():
-            offset = (x - self.camera.x, y - self.camera.y)
-            screen_pos.append((self.screen.get_width() // 2 + offset[0], self.screen.get_height() // 2 + offset[1]))
+        for v in obj.get_vertices():
+            offset = (v - self.camera.pos) / self.unit_ratio
+            if self.screen.get_width() >= self.screen.get_height():
+                screen_pos.append((offset + 0.5) * self.screen_ratio + array([self.screen_offset, 0.]))
+            else:
+                screen_pos.append((offset + 0.5) * self.screen_ratio + array([0., self.screen_offset]))
 
         # Draw the polygons
         draw.polygon(self.screen, obj.color, screen_pos)
@@ -37,15 +53,17 @@ class Scene:
             left, right, top, bottom = self.camera.get_edges()
             if left <= x <= right and top <= y <= bottom:
                 return True
-            return False
+        return False
 
 
 class Camera:
-    PAN_SPEED = 5
+    PAN_SPEED = 0.5
 
-    def __init__(self, center_x, center_y, width, height):
-        self.x = center_x
-        self.y = center_y
+    def __init__(self, center_pos, width, height):
+        if type(center_pos) == ndarray:
+            self.pos = center_pos
+        else:
+            self.pos = array(center_pos)
         self.width = width
         self.height = height
         self.move_up = False
@@ -53,19 +71,21 @@ class Camera:
         self.move_down = False
         self.move_right = False
 
+    def __str__(self): return f'x={self.pos[0]} y={self.pos[1]} width={self.width} height={self.height}'
+
     def get_edges(self):
-        left = self.x - self.width // 2
-        right = self.x + self.width // 2
-        top = self.y - self.width // 2
-        bottom = self.y + self.width // 2
+        left = self.pos[0] - self.width / 2
+        right = self.pos[0] + self.width / 2
+        top = self.pos[1] - self.height / 2
+        bottom = self.pos[1] + self.height / 2
         return left, right, top, bottom
 
     def update(self):
         if self.move_up:
-            self.y -= self.PAN_SPEED
+            self.pos[1] -= self.PAN_SPEED
         if self.move_left:
-            self.x -= self.PAN_SPEED
+            self.pos[0] -= self.PAN_SPEED
         if self.move_down:
-            self.y += self.PAN_SPEED
+            self.pos[1] += self.PAN_SPEED
         if self.move_right:
-            self.x += self.PAN_SPEED
+            self.pos[0] += self.PAN_SPEED

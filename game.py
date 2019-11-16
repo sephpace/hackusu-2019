@@ -22,8 +22,7 @@ def setup(screen):
 
     # Add game objects to the scene
     # TODO: Add game objects here
-    scene.add(TestObj(10, 10, 10, 10))
-    scene.add(TestObj(-10, 10, 10, 10))
+    scene.add(TestObj((0., 0.)))
 
     return scene
 
