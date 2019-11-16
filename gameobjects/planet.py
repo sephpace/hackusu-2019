@@ -1,5 +1,5 @@
 
-from gameobjects import GameObject
+from . import GameObject
 
 
 class Planet(GameObject):
