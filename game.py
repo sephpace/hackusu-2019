@@ -3,6 +3,8 @@ import pygame
 
 from scene import Scene
 
+from gameobjects.testobj import TestObj
+
 
 def start():
     pygame.init()
@@ -20,6 +22,8 @@ def setup(screen):
 
     # Add game objects to the scene
     # TODO: Add game objects here
+    scene.add(TestObj(10, 10, 10, 10))
+    scene.add(TestObj(-10, 10, 10, 10))
 
     return scene
 
@@ -37,13 +41,24 @@ def main_loop(screen, scene, clock):
             if event.type == pygame.KEYDOWN:
                 key = event.key
                 if key == pygame.K_w:
-                    pass
+                    scene.camera.move_up = True
                 if key == pygame.K_a:
-                    pass
+                    scene.camera.move_left = True
                 if key == pygame.K_s:
-                    pass
+                    scene.camera.move_down = True
                 if key == pygame.K_d:
-                    pass
+                    scene.camera.move_right = True
+
+            if event.type == pygame.KEYUP:
+                key = event.key
+                if key == pygame.K_w:
+                    scene.camera.move_up = False
+                if key == pygame.K_a:
+                    scene.camera.move_left = False
+                if key == pygame.K_s:
+                    scene.camera.move_down = False
+                if key == pygame.K_d:
+                    scene.camera.move_right = False
 
             # Mouse events
             # TODO: Add mouse events
@@ -53,6 +68,9 @@ def main_loop(screen, scene, clock):
 
         # Update the scene
         scene.update()
+
+        # Update the display
+        pygame.display.update()
 
         # Set frame rate to 60 fps
         clock.tick(60)
