@@ -16,7 +16,7 @@ class City(GameObject):
         """
         direction = point - self.pos
         direction = direction / np.linalg.norm(direction)
-        bullet = Projectile(np.copy(self.pos), velocity=direction)
+        bullet = Projectile(np.copy(self.pos), velocity=direction*2)
         scene.add(bullet)
 
     def update(self):

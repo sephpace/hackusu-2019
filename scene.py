@@ -2,11 +2,17 @@
 from pygame import draw
 from numpy import array, ndarray
 
+from gameobjects import Planet, City, Projectile
+
+BOUNDARY = 100
+
 
 class Scene:
     def __init__(self, screen):
         self.screen = screen
-        self.game_objects = []
+        self.planets = []
+        self.cities = []
+        self.projectiles = []
 
         self.unit_ratio = 100
 
@@ -21,15 +27,46 @@ class Scene:
             self.screen_offset = (screen_height - screen_width) // 2
             self.camera = Camera((0., 0.), self.unit_ratio, (screen_height / screen_width) * self.unit_ratio)
 
-    def add(self, game_object): self.game_objects.append(game_object)
+    def add(self, obj):
+        if type(obj) == Planet:
+            self.planets.append(obj)
+        elif type(obj) == City:
+            self.cities.append(obj)
+        elif type(obj) == Projectile:
+            self.projectiles.append(obj)
+
+    def remove(self, obj):
+        if type(obj) == Planet:
+            self.planets.remove(obj)
+        elif type(obj) == City:
+            self.cities.remove(obj)
+        elif type(obj) == Projectile:
+            self.projectiles.remove(obj)
 
     def update(self):
         # Update the camera
         self.camera.update()
 
         # Update and render each object
-        for obj in self.game_objects:
+        game_objects = self.planets + self.cities + self.projectiles
+        for obj in game_objects:
             obj.update()
+
+            # Do gravity
+            if type(obj) == Projectile:
+                for planet in self.planets:
+                    planet.gravitate(obj)
+
+                    # Remove if hits planet
+                    if planet.distance(obj.pos) < 0:
+                        self.remove(obj)
+                        continue
+
+                # Remove if leaves boundary
+                x, y = obj.pos
+                if x < -BOUNDARY or x > BOUNDARY or y < -BOUNDARY or y > BOUNDARY:
+                    self.remove(obj)
+                    continue
 
             # Only render the object if it's on the screen
             if self.__is_visible(obj):
@@ -79,8 +116,6 @@ class Camera:
         self.move_left = False
         self.move_down = False
         self.move_right = False
-
-    def __str__(self): return f'x={self.pos[0]} y={self.pos[1]} width={self.width} height={self.height}'
 
     def get_edges(self):
         left = self.pos[0] - self.width / 2

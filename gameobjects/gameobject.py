@@ -16,8 +16,7 @@ class GameObject(ABC):
         self.color = color
         self.scale = scale
         self.rotation = rotation
-
-    def __str__(self): return f'x={self.pos[0]} y={self.pos[1]} color={self.color}'
+        self.has_gravity = False
 
     def get_vertices(self):
         v = np.copy(self.__vertices)

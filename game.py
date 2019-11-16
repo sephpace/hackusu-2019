@@ -23,7 +23,10 @@ def setup(screen):
     scene = Scene(screen)
 
     # Add game objects to the scene
-    planets = [Planet((50., 20.), color=(200, 100, 255)), Planet((-50., 20.), color=(100, 255, 100)), Planet((0., -20.), scale=25., color=(255, 255, 100))]
+    planets = [Planet((50., 20.), color=(200, 100, 255)),
+               Planet((-50., 20.), color=(100, 255, 100)),
+               Planet((0., -20.), scale=15., color=(255, 255, 100)),
+               Planet((-10., 10), scale=5, color=(255, 100, 20))]
     for planet in planets:
         scene.add(planet)
     player1 = City((-57.5, 5.5), color=(0, 0, 255), rotation=-.5)
@@ -74,7 +77,7 @@ def main_loop(screen, scene, clock, player1, player2):
                 _, _, right_click = event.buttons
                 if right_click:
                     # TODO: Implement screen dragging with right click
-                    # print(scene.pixel_to_coord(np.array(event.pos)))
+                    print(scene.pixel_to_coord(np.array(event.pos)))
                     pass
 
             if event.type == pygame.MOUSEBUTTONDOWN:

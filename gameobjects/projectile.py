@@ -9,6 +9,7 @@ class Projectile(GameObject):
         super(Projectile, self).__init__(pos, color=color, scale=scale, rotation=rotation)
         self.load_model('raw_models/projectile.yml')
         self.velocity = velocity
+        self.has_gravity = True
 
     def update(self):
         self.pos += self.velocity
