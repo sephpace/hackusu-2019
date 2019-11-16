@@ -1,5 +1,6 @@
 
 import pygame
+import numpy as np
 
 from scene import Scene
 
@@ -21,11 +22,9 @@ def setup(screen):
     scene = Scene(screen)
 
     # Add game objects to the scene
-    # TODO: Add game objects here
     scene.add(Planet((0., 0.)))
     scene.add(Projectile((50., 0.)))
-    scene.add(City((1.5, -2.9), color=(0, 0, 255), rotation=.5))
-
+    scene.add(City((7.5, -14.5), color=(0, 0, 255), rotation=.5))
 
     return scene
 
@@ -63,7 +62,14 @@ def main_loop(screen, scene, clock):
                     scene.camera.move_right = False
 
             # Mouse events
-            # TODO: Add mouse events
+            if event.type == pygame.MOUSEMOTION:
+                _, _, right_click = event.buttons
+                if right_click:
+                    print(scene.pixel_to_coord(np.array(event.pos)))
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left click
+                    print(scene.pixel_to_coord(np.array(event.pos)))
 
         # Clear the screen
         screen.fill((0, 0, 0))

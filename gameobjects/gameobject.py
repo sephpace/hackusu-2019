@@ -24,8 +24,8 @@ class GameObject(ABC):
         rotation_matrix = np.array([[math.cos(self.rotation), -math.sin(self.rotation)],
                                    [math.sin(self.rotation), math.cos(self.rotation)]])
         v = np.transpose(np.matmul(rotation_matrix, np.transpose(v)))
-        v += self.pos
         v *= self.scale
+        v += self.pos
         return v
 
     def load_model(self, file_path):

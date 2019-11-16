@@ -39,11 +39,8 @@ class Scene:
         # Calculate vertex offsets from camera
         screen_pos = []
         for v in obj.get_vertices():
-            offset = (v - self.camera.pos) / self.unit_ratio
-            if self.screen.get_width() >= self.screen.get_height():
-                screen_pos.append((offset + 0.5) * self.screen_ratio + array([self.screen_offset, 0.]))
-            else:
-                screen_pos.append((offset + 0.5) * self.screen_ratio + array([0., self.screen_offset]))
+            offset = (v - self.camera.pos)
+            screen_pos.append(self.coord_to_pixel(offset))
 
         # Draw the polygons
         draw.polygon(self.screen, obj.color, screen_pos)
@@ -54,6 +51,18 @@ class Scene:
             if left <= x <= right and top <= y <= bottom:
                 return True
         return False
+
+    def pixel_to_coord(self, pixel_pos):
+        if self.screen.get_width() >= self.screen.get_height():
+            return ((pixel_pos - array([self.screen_offset, 0])) / self.screen_ratio - 0.5) * self.unit_ratio
+        else:
+            return ((pixel_pos - array([0, self.screen_offset])) / self.screen_ratio - 0.5) * self.unit_ratio
+
+    def coord_to_pixel(self, coord):
+        if self.screen.get_width() >= self.screen.get_height():
+            return (coord / self.unit_ratio + 0.5) * self.screen_ratio + array([self.screen_offset, 0.])
+        else:
+            return (coord / self.unit_ratio + 0.5) * self.screen_ratio + array([0., self.screen_offset])
 
 
 class Camera:
